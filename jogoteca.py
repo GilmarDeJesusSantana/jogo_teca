@@ -17,6 +17,8 @@ def index():
 
 @app.route('/cadastro-de-jogos')
 def cadastro_de_jogos():
+    if 'usuario_logado' in session or session['usuario_logado'] == None:
+        return redirect('/login')
     nome_formulario = 'Cadastro de Jogos'
     return render_template('cadastro_de_jogos.html', titulo=nome_formulario)
 
