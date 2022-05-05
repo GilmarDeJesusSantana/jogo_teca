@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 
 from jogos import Jogos
 
@@ -18,7 +18,7 @@ def index():
 @app.route('/cadastro-de-jogos')
 def cadastro_de_jogos():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        return redirect('/login?proxima=cadastro-de-jogos')
+        return redirect(url_for('login', proxima=url_for('cadastro_de_jogos')))
     nome_formulario = 'Cadastro de Jogos'
     return render_template('cadastro_de_jogos.html', titulo=nome_formulario)
 
@@ -30,7 +30,7 @@ def criar():
     console = request.form['console']
     jogo = Jogos(nome, categoria, console)
     lista_jogos.append(jogo)
-    return redirect('/')
+    return redirect(url_for('index'))
 
 
 @app.route('/login')
@@ -45,17 +45,17 @@ def autenticar():
         session['usuario_logado'] = request.form['usuario']
         flash(session['usuario_logado'] + ' logado com sucesso.')
         proxima_pagina = request.form['proxima']
-        return redirect(f'/{proxima_pagina}')
+        return redirect(proxima_pagina)
     else:
         flash('Usuário não logado.')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
 
 @app.route('/logout')
 def logout():
     session['usuario_logado'] = None
     flash('Logout efetuado!')
-    return redirect('/')
+    return redirect(url_for('login'))
 
 
 app.secret_key = 'Gilmar'
