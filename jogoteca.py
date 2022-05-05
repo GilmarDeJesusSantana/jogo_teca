@@ -14,4 +14,8 @@ def ola():
     return render_template('lista.html', titulo='Jogos', jogos=lista_jogos)
 
 
+@app.route('/cadastro-de-jogos')
+def cadastro_de_jogos():
+    nome_formulario='Cadastro de Jogos'
+    return render_template('cadastro_de_jogos.html', titulo=nome_formulario)
 app.run()
