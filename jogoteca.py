@@ -27,4 +27,17 @@ def criar():
     jogo = Jogos(nome, categoria, console)
     lista_jogos.append(jogo)
     return redirect('/')
+
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/autenticar', methods=['Post'])
+def autenticar():
+    if 'alohomora' == request.form['senha']:
+        return redirect('/')
+    else:
+        return redirect('/login')
+
 app.run(debug=True)
