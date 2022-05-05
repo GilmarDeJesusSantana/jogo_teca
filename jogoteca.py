@@ -17,8 +17,8 @@ def index():
 
 @app.route('/cadastro-de-jogos')
 def cadastro_de_jogos():
-    if 'usuario_logado' in session or session['usuario_logado'] == None:
-        return redirect('/login')
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect('/login?proxima=cadastro-de-jogos')
     nome_formulario = 'Cadastro de Jogos'
     return render_template('cadastro_de_jogos.html', titulo=nome_formulario)
 
@@ -35,7 +35,8 @@ def criar():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    proxima = request.args.get('proxima')
+    return render_template('login.html', proxima=proxima)
 
 
 @app.route('/autenticar', methods=['Post'])
@@ -43,7 +44,8 @@ def autenticar():
     if 'alohomora' == request.form['senha']:
         session['usuario_logado'] = request.form['usuario']
         flash(session['usuario_logado'] + ' logado com sucesso.')
-        return redirect('/')
+        proxima_pagina = request.form['proxima']
+        return redirect(f'/{proxima_pagina}')
     else:
         flash('Usuário não logado.')
         return redirect('/login')
