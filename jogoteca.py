@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 
 from jogos import Jogos
+from usuarios import Usuarios
 
 app = Flask(__name__)
 
@@ -9,6 +10,15 @@ jogo2 = Jogos('Good of War', 'Rack n Slash', 'PS2')
 jogo3 = Jogos('Mortal Kombat', 'Luta', 'Snes')
 lista_jogos = [jogo1, jogo2, jogo3]
 
+usuario1 = Usuarios('Gilmar', 'Gil', 'Nao_sei')
+usuario2 = Usuarios('Renata', 'Negona', 'Sei_la')
+usuario3 = Usuarios('Gilmara', 'Magrela', 'Esta_perdida')
+
+usuarios = {
+    usuario1.nickname : usuario1,
+    usuario2.nickname : usuario2,
+    usuario3.nickname : usuario3
+}
 
 @app.route('/')
 def index():
@@ -41,11 +51,13 @@ def login():
 
 @app.route('/autenticar', methods=['Post'])
 def autenticar():
-    if 'alohomora' == request.form['senha']:
-        session['usuario_logado'] = request.form['usuario']
-        flash(session['usuario_logado'] + ' logado com sucesso.')
-        proxima_pagina = request.form['proxima']
-        return redirect(proxima_pagina)
+    if request.form['usuario'] in usuarios:
+        usuario = usuarios[request.form['usuario']]
+        if request.form['senha'] == usuario.senha:
+            session['usuario_logado'] = usuario.nickname
+            flash(usuario.nickname + ' logado com sucesso.')
+            proxima_pagina = request.form['proxima']
+            return redirect(proxima_pagina)
     else:
         flash('Usuário não logado.')
         return redirect(url_for('login'))
