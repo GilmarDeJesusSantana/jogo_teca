@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 
 from jogos import Jogos
 from usuarios import Usuarios
-from dao import JogoDao
+from dao import JogoDao, UsuarioDao
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
@@ -15,24 +15,12 @@ app.config['MYSQL_PORT'] = 3306
 db = MySQL(app)
 
 jogo_dao = JogoDao(db)
+usuario_dao = UsuarioDao(db)
 
-jogo1 = Jogos('Tetris', 'Puzzle', 'Atari')
-jogo2 = Jogos('Good of War', 'Rack n Slash', 'PS2')
-jogo3 = Jogos('Mortal Kombat', 'Luta', 'Snes')
-lista_jogos = [jogo1, jogo2, jogo3]
-
-usuario1 = Usuarios('Gilmar', 'Gil', 'Nao_sei')
-usuario2 = Usuarios('Renata', 'Negona', 'Sei_la')
-usuario3 = Usuarios('Gilmara', 'Magrela', 'Esta_perdida')
-
-usuarios = {
-    usuario1.nickname : usuario1,
-    usuario2.nickname : usuario2,
-    usuario3.nickname : usuario3
-}
 
 @app.route('/')
 def index():
+    lista_jogos = jogo_dao.listar()
     return render_template('lista.html', titulo='Jogos', jogos=lista_jogos)
 
 
@@ -62,8 +50,8 @@ def login():
 
 @app.route('/autenticar', methods=['Post'])
 def autenticar():
-    if request.form['usuario'] in usuarios:
-        usuario = usuarios[request.form['usuario']]
+    usuario = usuario_dao.buscar_por_id(request.form['usuario'])
+    if usuario:
         if request.form['senha'] == usuario.senha:
             session['usuario_logado'] = usuario.nickname
             flash(usuario.nickname + ' logado com sucesso.')
