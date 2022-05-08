@@ -60,6 +60,8 @@ def criar():
     console = request.form['console']
     jogo = Jogos(nome, categoria, console)
     jogo_dao.salvar(jogo)
+    arquivo = request.files['arquivo']
+    arquivo.save(f'uploads/{arquivo.filename}')
     return redirect(url_for('index'))
 
 
