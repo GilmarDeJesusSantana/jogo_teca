@@ -1,17 +1,12 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for
+from flask import render_template, request, redirect, session, flash, url_for
 
 from jogos import Jogos
 from usuarios import Usuarios
 from dao import JogoDao, UsuarioDao
 from flask_mysqldb import MySQL
+from setup_app import setup_app
 
-app = Flask(__name__)
-
-app.config['MYSQL_HOST'] = '0.0.0.0'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'teluni12'
-app.config['MYSQL_DB'] = 'jogoteca'
-app.config['MYSQL_PORT'] = 3306
+app = setup_app()
 db = MySQL(app)
 
 jogo_dao = JogoDao(db)
