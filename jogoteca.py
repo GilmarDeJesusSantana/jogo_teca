@@ -1,7 +1,6 @@
 from flask import render_template, request, redirect, session, flash, url_for
 
 from jogos import Jogos
-from usuarios import Usuarios
 from dao import JogoDao, UsuarioDao
 from flask_mysqldb import MySQL
 from setup_app import setup_app
@@ -25,6 +24,21 @@ def cadastro_de_jogos():
         return redirect(url_for('login', proxima=url_for('cadastro_de_jogos')))
     nome_formulario = 'Cadastro de Jogos'
     return render_template('cadastro_de_jogos.html', titulo=nome_formulario)
+
+
+@app.route('/editar-jogos/<int:id>')
+def editar_jogos(id):
+    nome_formulario = 'Edição de Jogo.'
+
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect(url_for('login', proxima=url_for('editar_jogos')))
+    jogo = jogo_dao.busca_por_id(id)
+    return render_template('editar_jogos.html', titulo=nome_formulario, jogo=jogo)
+
+
+@app.route('/atualizar', methods=['POST', ])
+def atualizar():
+    pass
 
 
 @app.route('/criar', methods=['POST', ])

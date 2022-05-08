@@ -1,6 +1,7 @@
-from flask import  Flask
+from flask import Flask
 
 app = Flask(__name__)
+
 
 def setup_app():
     app.config['MYSQL_HOST'] = '0.0.0.0'
