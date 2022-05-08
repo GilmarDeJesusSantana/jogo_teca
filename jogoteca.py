@@ -2,8 +2,19 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 
 from jogos import Jogos
 from usuarios import Usuarios
+from dao import JogoDao
+from flask_mysqldb import MySQL
 
 app = Flask(__name__)
+
+app.config['MYSQL_HOST'] = '0.0.0.0'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'teluni12'
+app.config['MYSQL_DB'] = 'jogoteca'
+app.config['MYSQL_PORT'] = 3306
+db = MySQL(app)
+
+jogo_dao = JogoDao(db)
 
 jogo1 = Jogos('Tetris', 'Puzzle', 'Atari')
 jogo2 = Jogos('Good of War', 'Rack n Slash', 'PS2')
@@ -39,7 +50,7 @@ def criar():
     categoria = request.form['categoria']
     console = request.form['console']
     jogo = Jogos(nome, categoria, console)
-    lista_jogos.append(jogo)
+    jogo_dao.salvar(jogo)
     return redirect(url_for('index'))
 
 
