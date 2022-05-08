@@ -38,8 +38,20 @@ def editar_jogos(id):
 
 @app.route('/atualizar', methods=['POST', ])
 def atualizar():
-    pass
+    nome = request.form['nome']
+    categoria = request.form['categoria']
+    console = request.form['console']
+    id = request.form['id']
+    jogo = Jogos(nome, categoria, console, id)
+    jogo_dao.salvar(jogo)
+    return redirect(url_for('index'))
 
+
+@app.route('/deletar/<int:id>')
+def deletar_jogos(id):
+    flash('Jogo deletado!')
+    jogo_dao.deletar(id)
+    return redirect(url_for('index'))
 
 @app.route('/criar', methods=['POST', ])
 def criar():
