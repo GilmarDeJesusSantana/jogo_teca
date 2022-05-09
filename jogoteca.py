@@ -59,9 +59,10 @@ def criar():
     categoria = request.form['categoria']
     console = request.form['console']
     jogo = Jogos(nome, categoria, console)
-    jogo_dao.salvar(jogo)
+    jogo = jogo_dao.salvar(jogo)
     arquivo = request.files['arquivo']
-    arquivo.save(f'uploads/{arquivo.filename}')
+    upload_path = app.config['UPLOAD_PATH']
+    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
     return redirect(url_for('index'))
 
 
