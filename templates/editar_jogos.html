@@ -1,6 +1,15 @@
 {% extends 'template.html' %}
 {% block conteudo %}
-<form action="{{ url_for('atualizar') }}" method="post" xmlns="http://www.w3.org/1999/html">
+      <form action="{{ url_for('atualizar') }}" method="post" xmlns="http://www.w3.org/1999/html">
+        <figure>
+          <img src="{{ url_for('imagem', nome_arquivo=capa_jogo) }}">
+          <figcaption>
+            <label>
+              <input type="file" name="arquivo" accept=".jpg">
+            </label>
+          </figcaption>
+        </figure>
+
         <fieldset>
           <input type="hidden" name="id" value="{{ jogo.id }}">
           <div class="form-group">

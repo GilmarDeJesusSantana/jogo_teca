@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, session, flash, url_for
+from flask import render_template, request, redirect, session, flash, url_for, \
+    send_from_directory
 
 from jogos import Jogos
 from dao import JogoDao, UsuarioDao
@@ -33,7 +34,12 @@ def editar_jogos(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login', proxima=url_for('editar_jogos')))
     jogo = jogo_dao.busca_por_id(id)
-    return render_template('editar_jogos.html', titulo=nome_formulario, jogo=jogo)
+    capa_jogo = f'capa{id}.jpg'
+    return render_template('editar_jogos.html',
+                           titulo=nome_formulario,
+                           jogo=jogo,
+                           capa_jogo = capa_jogo
+                           )
 
 
 @app.route('/atualizar', methods=['POST', ])
@@ -92,6 +98,9 @@ def logout():
     flash('Logout efetuado!')
     return redirect(url_for('login'))
 
+@app.route('/uploads/<nome_arquivo>')
+def imagem(nome_arquivo):
+    return send_from_directory('uploads', nome_arquivo)
 
 app.secret_key = 'Gilmar'
 app.run(debug=True)
