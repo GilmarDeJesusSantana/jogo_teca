@@ -1,10 +1,11 @@
 {% extends 'template.html' %}
 {% block conteudo %}
-      <form action="{{ url_for('atualizar') }}" method="post" xmlns="http://www.w3.org/1999/html">
-        <figure>
-          <img src="{{ url_for('imagem', nome_arquivo=capa_jogo) }}">
+      <form action="{{ url_for('atualizar') }}" method="post" enctype="multipart/form-data" xmlns="http://www.w3.org/1999/html">
+        <figure class="thumb col-md-4">
+          <img class="img-thumbnail" src="{{ url_for('imagem', nome_arquivo=capa_jogo) }}">
           <figcaption>
-            <label>
+            <label class="fileContainer">
+              Muda capa
               <input type="file" name="arquivo" accept=".jpg">
             </label>
           </figcaption>

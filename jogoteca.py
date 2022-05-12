@@ -1,3 +1,5 @@
+import os
+
 from flask import render_template, request, redirect, session, flash, url_for, \
     send_from_directory
 
@@ -5,6 +7,8 @@ from jogos import Jogos
 from dao import JogoDao, UsuarioDao
 from flask_mysqldb import MySQL
 from setup_app import setup_app
+
+import time
 
 app = setup_app()
 db = MySQL(app)
@@ -34,11 +38,11 @@ def editar_jogos(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login', proxima=url_for('editar_jogos')))
     jogo = jogo_dao.busca_por_id(id)
-    capa_jogo = f'capa{id}.jpg'
+    nome_imagem = recupera_imagem(id)
     return render_template('editar_jogos.html',
                            titulo=nome_formulario,
                            jogo=jogo,
-                           capa_jogo = capa_jogo
+                           capa_jogo = nome_imagem
                            )
 
 
@@ -48,8 +52,14 @@ def atualizar():
     categoria = request.form['categoria']
     console = request.form['console']
     id = request.form['id']
-    jogo = Jogos(nome, categoria, console, id)
+    jogo = Jogos(nome, categoria, console, id=request.form['id'])
     jogo_dao.salvar(jogo)
+
+    arquivo = request.files['arquivo']
+    upload_path = app.config['UPLOAD_PATH']
+    timestamp = time.time()
+    deleta_arquivo(jogo.id)
+    arquivo.save(f'{upload_path}/capa{id}-{timestamp}.jpg')
     return redirect(url_for('index'))
 
 
@@ -68,7 +78,8 @@ def criar():
     jogo = jogo_dao.salvar(jogo)
     arquivo = request.files['arquivo']
     upload_path = app.config['UPLOAD_PATH']
-    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
+    timestamp = time.time()
+    arquivo.save(f'{upload_path}/capa{jogo.id}-{timestamp}.jpg')
     return redirect(url_for('index'))
 
 
@@ -101,6 +112,16 @@ def logout():
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):
     return send_from_directory('uploads', nome_arquivo)
+
+
+def recupera_imagem(id):
+    for nome_arquivo in os.listdir(app.config['UPLOAD_PATH']):
+        if f'capa{id}' in nome_arquivo:
+            return nome_arquivo
+
+def deleta_arquivo(id):
+    arquivo = recupera_imagem(id)
+    os.remove(os.path.join(app.config['UPLOAD_PATH'],arquivo))
 
 app.secret_key = 'Gilmar'
 app.run(debug=True)
